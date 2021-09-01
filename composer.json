@@ -1,0 +1,29 @@
+{
+    "name": "ant/fast-dfs",
+    "description": "PHP FastDFS Client",
+    "type": "library",
+    "authors": [
+        {
+            "name": "xurh",
+            "email": "xurhwork@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^8.0",
+        "ext-bcmath": "*"
+    },
+    "require-dev": {
+        "mockery/mockery": "^1.4.2",
+        "phpunit/phpunit": "^9.3.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "Ant\\FastDFS\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Ant\\Test\\FastDFS\\": "tests"
+        }
+    }
+}
