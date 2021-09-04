@@ -2,12 +2,13 @@
 
 namespace Ant\FastDFS\Protocols;
 
+use Ant\FastDFS\BytesUtil;
 use Ant\FastDFS\Exceptions\ProtocolException;
 
 /**
- * @package Ant\FastDFS\Protocols
- * 
  * FastDFS Head Protocol
+ * 
+ * @package Ant\FastDFS\Protocols
  */
 class Head
 {
@@ -52,23 +53,11 @@ class Head
         }
 
         $bytes   = unpack('C10', $buffer);
-        $length  = self::unpackU64(mb_substr($buffer, 0, static::PKG_LEN_SIZE));
+        $length  = BytesUtil::unpackU64(mb_substr($buffer, 0, static::PKG_LEN_SIZE));
         $command = $bytes[static::COMMAND_INDEX];
         $status  = $bytes[static::STATUS_INDEX];
 
         return new Head($length, $command, $status);
-    }
-
-    /**
-     * @param string $value
-     * @return int
-     */
-    private static function unpackU64(string $value): int
-    {
-        list($hi, $lo) = array_values(unpack("N*N*", $value));
-
-        // 4294967295是32位最大自然数
-        return (int) bcadd($lo, bcmul($hi, "4294967296"));
     }
 
     /**
@@ -163,7 +152,7 @@ class Head
      */
     public function toBytes(): string
     {
-        $length = pack("NN", $this->length >> 32, $this->length & 0xFFFFFFFF);
+        $length = BytesUtil::packU64($this->length);
 
         return $length . pack('CC', $this->command, $this->status);
     }
