@@ -28,9 +28,9 @@ class BytesUtil
      */
     public static function unpackU64(string $value): int
     {
-        list($hi, $lo) = array_values(unpack("N*N*", $value));
+        list($hight, $low) = array_values(unpack("N*N*", $value));
 
-        return (int) bcadd($lo, bcmul($hi, "4294967296"));
+        return (int) bcadd($low, bcmul($hight, "4294967296"));
     }
 
     /**
