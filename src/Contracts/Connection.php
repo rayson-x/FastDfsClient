@@ -10,18 +10,11 @@ namespace Ant\FastDFS\Contracts;
 interface Connection
 {
     /**
-     * 获取输入流
+     * 获取输入输出流
      * 
      * @return Stream
      */
-    public function getInputStream(): Stream;
-
-    /**
-     * 获取输出流
-     * 
-     * @return Stream
-     */
-    public function getOutputStream(): Stream;
+    public function getStream(): Stream;
 
     /**
      * 关闭连接
@@ -29,13 +22,6 @@ interface Connection
      * @return void
      */
     public function close(): void;
-
-    /**
-     * 是否关闭连接
-     * 
-     * @return bool
-     */
-    public function isClosed(): bool;
 
     /**
      * 连接是否有效
