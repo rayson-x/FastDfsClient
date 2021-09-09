@@ -4,6 +4,7 @@ namespace Ant\FastDFS\Connections;
 
 use RuntimeException;
 use InvalidArgumentException;
+use Ant\FastDFS\Exceptions\IOException;
 use Ant\FastDFS\Contracts\Stream as StreamContract;
 
 /**
@@ -72,7 +73,7 @@ class Stream implements StreamContract
         $data = fread($this->stream, $length);
 
         if (false === $data) {
-            throw new RuntimeException('Unable to read from stream');
+            throw new IOException('Unable to read from stream');
         }
 
         return $data;
@@ -98,7 +99,7 @@ class Stream implements StreamContract
         $length = fwrite($this->stream, $byte);
 
         if ($length === false) {
-            throw new RuntimeException('Unable to write from stream');
+            throw new IOException('Unable to write from stream');
         }
 
         return $length;
@@ -195,12 +196,12 @@ class Stream implements StreamContract
 
     /**
      * @return void
-     * @throws RuntimeException
+     * @throws IOException
      */
     protected function checkStream(): void
     {
         if ($this->closed || empty($this->stream)) {
-            throw new RuntimeException('Stream is detached');
+            throw new IOException('Stream is detached');
         }
     }
 }
