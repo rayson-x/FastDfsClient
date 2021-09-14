@@ -3,11 +3,15 @@
 namespace Ant\FastDFS\Protocols;
 
 use Ant\FastDFS\BytesUtil;
+use Ant\FastDFS\Constants\Commands;
+use Ant\FastDFS\Constants\ErrorCode;
+use Ant\FastDFS\Exceptions\IOException;
 use Ant\FastDFS\Exceptions\ProtocolException;
+use Ant\FastDFS\Exceptions\ServerException;
 
 /**
  * FastDFS Head Protocol
- * 
+ *
  * @package Ant\FastDFS\Protocols
  */
 class Head
@@ -159,12 +163,22 @@ class Head
 
     /**
      * 校验服务器响应头
-     * 
+     *
      * @return void
      * @throws FastDFSException
      */
     public function validateResponseHead()
     {
-        // TODO
+        if ($this->command !== Commands::PROTO_RESPONSE) {
+            throw new IOException("recv cmd: {$this->command} is not correct");
+        }
+
+        if ($this->status !== ErrorCode::SUCCESS) {
+            throw ServerException::byCode($this->status);
+        }
+
+        if ($this->length < 0) {
+            throw new IOException("recv body length: {$this->length} < 0!");
+        }
     }
 }

@@ -127,8 +127,8 @@ class FieldMetadata
 
         return $this->size = match ($this->type) {
             FastDFSParam::TYPE_STRING => $this->max,
-            FastDFSParam::TYPE_INT    => Common::LONG_LENGTH,
-            FastDFSParam::TYPE_BYTE   => Common::BYTE_LENGTH,
+            FastDFSParam::TYPE_INT    => Common::LONG_SIZE,
+            FastDFSParam::TYPE_BYTE   => Common::BYTE_SIZE,
             default                   => 0,
         };
     }
@@ -156,7 +156,7 @@ class FieldMetadata
         return match ($this->type) {
             FastDFSParam::TYPE_STRING    => BytesUtil::padding($value, $this->max),
             FastDFSParam::TYPE_INT       => BytesUtil::packU64($value),
-            FastDFSParam::TYPE_BYTE      => BytesUtil::padding($value, Common::BYTE_LENGTH),
+            FastDFSParam::TYPE_BYTE      => BytesUtil::padding($value, Common::BYTE_SIZE),
             FastDFSParam::TYPE_STREAM    => $value,
             FastDFSParam::TYPE_FILE_META => '', // TODO FileMeta
             default                      => throw new InvalidArgumentException("类型错误无法转换为byte"),
