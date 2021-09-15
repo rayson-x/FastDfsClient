@@ -29,4 +29,12 @@ interface Connection
      * @return bool
      */
     public function isValid(): bool;
+
+    /**
+     * 执行指定的指令,写入传入的参数,并处理响应的内容
+     *
+     * @param Command $command
+     * @return mixed
+     */
+    public function executeCommand(Command $command);
 }
