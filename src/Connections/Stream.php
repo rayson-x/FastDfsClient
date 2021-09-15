@@ -82,21 +82,21 @@ class Stream implements StreamContract
     /**
      * 写入数据
      *
-     * @param string $byte
+     * @param string $buffer
      * @return int
      */
-    public function write(string $byte): int
+    public function write(string $buffer): int
     {
         $this->checkStream();
 
-        if (empty($byte)) {
+        if (empty($buffer)) {
             return 0;
         }
 
         // 写入后需要重新计算流的总长度
         $this->size = null;
 
-        $length = fwrite($this->stream, $byte);
+        $length = fwrite($this->stream, $buffer);
 
         if ($length === false) {
             throw new IOException('Unable to write from stream');
