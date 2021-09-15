@@ -174,7 +174,7 @@ class ObjectMetadata
      * @param string $byte
      * @return string
      */
-    public function toObject(string $byte): object
+    public function newInstance(string $byte): object
     {
         $object = $this->reflect->newInstance();
         foreach ($this->getFields() as $field) {
