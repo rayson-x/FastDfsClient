@@ -15,35 +15,28 @@ class ObjectMetadata
     /**
      * @var ReflectionClass
      */
-    protected $reflect;
+    protected ReflectionClass $reflect;
 
     /**
      * 传输时使用的字段
      *
      * @var array<FieldMetadata>
      */
-    protected $fields = [];
+    protected array $fields = [];
 
     /**
      * 传输时内容大小不固定的列
      *
      * @var array<FieldMetadata>
      */
-    protected $dynamicFields = [];
+    protected array $dynamicFields = [];
 
     /**
      * 字段总长度(不包含动态长度的字段)
      *
      * @var int
      */
-    protected $fieldTotalSize = 0;
-
-    /**
-     * 动态字段总长度
-     *
-     * @var int|null
-     */
-    protected $dynamicTieldTotalSize = null;
+    protected int $fieldTotalSize = 0;
 
     /**
      * @param string $class
@@ -124,10 +117,6 @@ class ObjectMetadata
      */
     public function getDynamicTotalFieldSize(object $bean): int
     {
-        if ($this->dynamicTieldTotalSize !== null) {
-            return $this->dynamicTieldTotalSize;
-        }
-
         $size = 0;
         foreach ($this->dynamicFields as $field) {
             $size = $field->getDynamicSize($bean);

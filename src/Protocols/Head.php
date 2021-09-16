@@ -30,27 +30,27 @@ class Head
      *
      * @var int
      */
-    protected $length;
+    protected int $length;
 
     /**
      * 指令
      *
      * @var int
      */
-    protected $command;
+    protected int $command;
 
     /**
      * 状态
      *
      * @var int
      */
-    protected $status;
+    protected int $status;
 
     /**
      * @param string $buffer
      * @return Head
      */
-    public static function createFromBuffer(string $buffer)
+    public static function createFromBuffer(string $buffer): Head
     {
         if (strlen($buffer) !== static::HEAD_LENGTH) {
             throw new ProtocolException('recv package size != ' . static::HEAD_LENGTH);
@@ -69,7 +69,7 @@ class Head
      * @param int $command
      * @param int $status
      */
-    public function __construct(int $length, int $command, int $status)
+    public function __construct(int $length, int $command, int $status = 0)
     {
         $this->length  = $length;
         $this->command = $command;
@@ -79,7 +79,7 @@ class Head
     /**
      * @return int
      */
-    public function getLength()
+    public function getLength(): int
     {
         return $this->length;
     }
@@ -87,7 +87,7 @@ class Head
     /**
      * @return int
      */
-    public function getCommand()
+    public function getCommand(): int
     {
         return $this->command;
     }
@@ -95,7 +95,7 @@ class Head
     /**
      * @return int
      */
-    public function getStatus()
+    public function getStatus(): int
     {
         return $this->status;
     }
@@ -104,7 +104,7 @@ class Head
      * @param int $length
      * @return Head
      */
-    public function withLength(int $length)
+    public function withLength(int $length): Head
     {
         if ($length === $this->length) {
             return $this;
@@ -121,7 +121,7 @@ class Head
      * @param int $command
      * @return Head
      */
-    public function withCommand(int $command)
+    public function withCommand(int $command): Head
     {
         if ($command === $this->command) {
             return $this;
@@ -138,7 +138,7 @@ class Head
      * @param int $status
      * @return Head
      */
-    public function withStatus(int $status)
+    public function withStatus(int $status): Head
     {
         if ($status === $this->status) {
             return $this;

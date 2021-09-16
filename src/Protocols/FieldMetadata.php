@@ -58,7 +58,7 @@ class FieldMetadata
      *
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->property->getName();
     }
@@ -108,7 +108,7 @@ class FieldMetadata
      * 
      * @return ReflectionProperty
      */
-    public function getProperty()
+    public function getProperty(): ReflectionProperty
     {
         return $this->property;
     }

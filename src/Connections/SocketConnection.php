@@ -3,7 +3,6 @@
 namespace Ant\FastDFS\Connections;
 
 use RuntimeException;
-use InvalidArgumentException;
 use Ant\FastDFS\Protocols\Head;
 use Ant\FastDFS\Contracts\Command;
 use Ant\FastDFS\Contracts\Request;
@@ -21,30 +20,16 @@ class SocketConnection implements Connection
     /**
      * @var Stream
      */
-    protected $stream;
+    protected StreamContract $stream;
 
     /**
      * @param string $uri
      * @param int $timeout
      * @param array $context
      */
-    public function __construct(string $uri, int $timeout = 30, array $context = [])
+    public function __construct(string $address, int $port, int $timeout = 30, array $context = [])
     {
-        if (strpos($uri, '://') === false) {
-            $uri = 'tcp://' . $uri;
-        }
-
-        $parts = parse_url($uri);
-        if (!$parts || !isset($parts['scheme'], $parts['host'], $parts['port']) || $parts['scheme'] !== 'tcp') {
-            throw new InvalidArgumentException("Given URI \"{$uri}\" is invalid");
-        }
-
-        $ip = trim($parts['host'], '[]');
-        if (false === filter_var($ip, FILTER_VALIDATE_IP)) {
-            throw new InvalidArgumentException("Given URI \"{$ip}\" does not contain a valid host IP");
-        }
-
-        $remote = "tcp://{$parts['host']}:{$parts['port']}";
+        $remote = "tcp://{$address}:{$port}";
 
         $socket = @stream_socket_client(
             $remote,
@@ -56,7 +41,7 @@ class SocketConnection implements Connection
         );
 
         if (false === $socket) {
-            throw new RuntimeException("Connection to {$uri} failed: {$errstr}", $errno);
+            throw new RuntimeException("Connection to {$address}:{$port} failed: {$errstr}", $errno);
         }
 
         $this->stream = new Stream($socket);

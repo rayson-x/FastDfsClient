@@ -14,7 +14,7 @@ class Response implements ResponseContract
     /**
      * @var MetadataMapper
      */
-    protected $mapper;
+    protected MetadataMapper $mapper;
 
     /**
      * @param MetadataMapper $mapper

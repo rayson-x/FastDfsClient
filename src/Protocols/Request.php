@@ -18,14 +18,14 @@ class Request implements RequestContract
      *
      * @var Head
      */
-    protected $head;
+    protected Head $head;
 
     /**
      * 文件的stream,默认为空,子类继承后设置该值
      * 
      * @var Stream|null
      */
-    protected $inputFileStream = null;
+    protected ?Stream $inputFileStream = null;
 
     /**
      * @param ObjectMetadata $meta

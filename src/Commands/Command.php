@@ -17,19 +17,14 @@ use Ant\FastDFS\Contracts\Response as ResponseContract;
 abstract class Command implements CommandContract
 {
     /**
-     * @var array
-     */
-    protected $arguments = [];
-
-    /**
      * @var string
      */
-    protected $response;
+    protected string $response;
 
     /**
      * @var MetadataMapper
      */
-    protected $mapper;
+    protected MetadataMapper $mapper;
 
     /**
      * @param MetadataMapper $mapper

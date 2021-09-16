@@ -14,7 +14,7 @@ class MetadataMapper
      * 
      * @param array
      */
-    protected $mapCache = [];
+    protected array $mapCache = [];
 
     /**
      * 获取对象元数据

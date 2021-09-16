@@ -22,17 +22,17 @@ class Stream implements StreamContract
     /**
      * @var int|null
      */
-    protected $size;
+    protected ?int $size;
 
     /**
      * @var array
      */
-    protected $customMetadata = [];
+    protected array $customMetadata = [];
 
     /**
      * @var bool
      */
-    protected $closed = false;
+    protected bool $closed = false;
 
     /**
      * @param resource $stream
