@@ -1,21 +1,21 @@
 <?php
 
-namespace Ant\FastDFS\Connections;
+namespace Ant\FastDFS\Connections\Default;
 
 use RuntimeException;
 use Ant\FastDFS\Protocols\Head;
 use Ant\FastDFS\Contracts\Command;
 use Ant\FastDFS\Contracts\Request;
 use Ant\FastDFS\Contracts\Response;
-use Ant\FastDFS\Contracts\Connection;
 use Ant\FastDFS\Contracts\Stream as StreamContract;
+use Ant\FastDFS\Contracts\Connection as ConnectionContract;
 
 /**
  * SocketConnection
  *
  * @package Ant\FastDFS\Connections
  */
-class SocketConnection implements Connection
+class Connection implements ConnectionContract
 {
     /**
      * @var Stream

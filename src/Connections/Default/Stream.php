@@ -1,6 +1,6 @@
 <?php
 
-namespace Ant\FastDFS\Connections;
+namespace Ant\FastDFS\Connections\Default;
 
 use RuntimeException;
 use InvalidArgumentException;
