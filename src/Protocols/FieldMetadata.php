@@ -182,6 +182,8 @@ class FieldMetadata
 
         if ($this->type === FastDFSParam::TYPE_INT) {
             $value = BytesUtil::unpackU64($value);
+        } elseif ($this->type === FastDFSParam::TYPE_STRING) {
+            $value = trim($value);
         }
 
         return $value;
