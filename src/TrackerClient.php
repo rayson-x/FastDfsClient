@@ -47,7 +47,7 @@ class TrackerClient extends Client
     {
         $node = $this->getStoreStorage();
 
-        return $this->getStorageClientFrom($node);
+        return new StorageClient($node, $this->config, $this->connector, $this->mapper);
     }
 
     /**
@@ -58,17 +58,6 @@ class TrackerClient extends Client
     {
         $node = $this->getStoreStorageWithGroup($group);
 
-        return $this->getStorageClientFrom($node);
-    }
-
-    /**
-     * @param StorageNode $node
-     * @return StorageClient
-     */
-    protected function getStorageClientFrom(StorageNode $node): StorageClient
-    {
-        return new StorageClient(
-            ["{$node->ip}:{$node->port}"], $this->config, $this->connector, $this->mapper
-        );
+        return new StorageClient($node, $this->config, $this->connector, $this->mapper);
     }
 }
