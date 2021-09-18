@@ -7,8 +7,8 @@ use InvalidArgumentException;
 use Ant\FastDFS\Commands\Storage\Upload;
 use Ant\FastDFS\Protocols\MetadataMapper;
 use Ant\FastDFS\Connections\Default\Stream;
-use Ant\FastDFS\Protocols\Response\StorePath;
-use Ant\FastDFS\Protocols\Response\StorageNode;
+use Ant\FastDFS\Protocols\Struct\StorePath;
+use Ant\FastDFS\Protocols\Struct\StorageNode;
 use Ant\FastDFS\Contracts\Connector as ConnectorContract;
 
 /**

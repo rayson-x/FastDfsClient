@@ -8,7 +8,7 @@ use Ant\FastDFS\Constants\Common;
 use Ant\FastDFS\Contracts\Stream;
 use Ant\FastDFS\Contracts\Response;
 use Ant\FastDFS\Protocols\FastDFSParam;
-use Ant\FastDFS\Protocols\Response\StorePath;
+use Ant\FastDFS\Protocols\Struct\StorePath;
 
 /**
  * 上传文件

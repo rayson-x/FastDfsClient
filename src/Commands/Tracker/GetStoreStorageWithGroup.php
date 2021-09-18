@@ -6,7 +6,7 @@ use Ant\FastDFS\Commands\Command;
 use Ant\FastDFS\Constants\Common;
 use Ant\FastDFS\Contracts\Response;
 use Ant\FastDFS\Protocols\FastDFSParam;
-use Ant\FastDFS\Protocols\Response\StorageNode;
+use Ant\FastDFS\Protocols\Struct\StorageNode;
 
 /**
  * 根据分组名称从Tracker服务器获取可用的Storage服务器

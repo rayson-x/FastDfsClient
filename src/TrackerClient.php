@@ -4,7 +4,7 @@ namespace Ant\FastDFS;
 
 use Ant\FastDFS\Connections\Connector;
 use Ant\FastDFS\Protocols\MetadataMapper;
-use Ant\FastDFS\Protocols\Response\StorageNode;
+use Ant\FastDFS\Protocols\Struct\StorageNode;
 use Ant\FastDFS\Commands\Tracker\GetStoreStorage;
 use Ant\FastDFS\Contracts\Connector as ConnectorContract;
 use Ant\FastDFS\Commands\Tracker\GetStoreStorageWithGroup;
@@ -12,6 +12,10 @@ use Ant\FastDFS\Commands\Tracker\GetStoreStorageWithGroup;
 /**
  * @method StorageNode getStoreStorage()
  * @method StorageNode getStoreStorageWithGroup(string $group)
+ * 
+ * Tracker客户端,主要负责获取Storage服务器信息
+ * 
+ * @package Ant\FastDFS
  */
 class TrackerClient extends Client
 {
