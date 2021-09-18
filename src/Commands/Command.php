@@ -3,6 +3,7 @@
 namespace Ant\FastDFS\Commands;
 
 use InvalidArgumentException;
+use Ant\FastDFS\Contracts\Stream;
 use Ant\FastDFS\Protocols\Request;
 use Ant\FastDFS\Protocols\Response;
 use Ant\FastDFS\Protocols\FastDFSParam;
@@ -17,14 +18,14 @@ use Ant\FastDFS\Contracts\Response as ResponseContract;
 abstract class Command implements CommandContract
 {
     /**
-     * @var string
-     */
-    protected string $response;
-
-    /**
      * @var MetadataMapper
      */
     protected MetadataMapper $mapper;
+
+    /**
+     * @var Stream|null
+     */
+    protected ?Stream $inputStream = null;
 
     /**
      * @param MetadataMapper $mapper
@@ -43,11 +44,9 @@ abstract class Command implements CommandContract
     {
         $meta = $this->mapper->getObjectMetadata($this);
 
-        // TODO 单独封装一个方法,把Stream类型的字段进行转换
-        // 检查是否为文件->FileStream,普通字符串->BufferStream
         foreach ($meta->getFields() as $field) {
             if (
-                empty($arguments[$field->getIndex()]) &&
+                !array_key_exists($field->getIndex(), $arguments) &&
                 $field->getType() !== FastDFSParam::TYPE_NULLABLE
             ) {
                 throw new InvalidArgumentException(
@@ -64,7 +63,9 @@ abstract class Command implements CommandContract
      */
     public function getRequest(): RequestContract
     {
-        return new Request($this->mapper->getObjectMetadata($this), $this);
+        $meta = $this->mapper->getObjectMetadata($this);
+
+        return new Request($meta, $this, $this->inputStream);
     }
 
     /**

@@ -22,7 +22,7 @@ class Stream implements StreamContract
     /**
      * @var int|null
      */
-    protected ?int $size;
+    protected ?int $size = null;
 
     /**
      * @var array

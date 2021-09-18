@@ -21,21 +21,22 @@ class Request implements RequestContract
     protected Head $head;
 
     /**
-     * 文件的stream,默认为空,子类继承后设置该值
-     * 
-     * @var Stream|null
-     */
-    protected ?Stream $inputFileStream = null;
-
-    /**
      * @param ObjectMetadata $meta
      * @param Command $command
+     * @param Stream|null $inputFileStream
      */
-    public function __construct(protected ObjectMetadata $meta, protected Command $command)
-    {
-        $this->head = new Head(
-            $meta->getFieldsSendTotalSize($command), $command->getCmd(), 0
-        );
+    public function __construct(
+        protected ObjectMetadata $meta, 
+        protected Command $command,
+        protected ?Stream $inputFileStream = null
+    ) {
+        $size = $meta->getFieldsSendTotalSize($command);
+
+        if ($inputFileStream !== null) {
+            $size += $inputFileStream->getSize();
+        }
+
+        $this->head = new Head($size, $command->getCmd());
     }
 
     /**

@@ -41,18 +41,18 @@ class FastDFSParam
     public const TYPE_NULLABLE = 3;
 
     /**
-     * 流式内容
-     * 
-     * @var int
-     */
-    public const TYPE_STREAM = 4;
-
-    /**
      * 文件属性
      * 
      * @var int
      */
-    public const TYPE_FILE_META = 5;
+    public const TYPE_FILE_META = 4;
+
+    /**
+     * 剩余全部内容
+     * 
+     * @var int
+     */
+    public const TYPE_ALL_REST_BYTE = 5;
 
     /**
      * @param int $index
@@ -77,8 +77,8 @@ class FastDFSParam
     {
         return in_array($type, [
             static::TYPE_NULLABLE,
-            static::TYPE_STREAM,
             static::TYPE_FILE_META,
+            static::TYPE_ALL_REST_BYTE,
         ]);
     }
 }

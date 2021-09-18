@@ -154,12 +154,12 @@ class FieldMetadata
         $value = $this->property->getValue($bean);
 
         return match ($this->type) {
-            FastDFSParam::TYPE_STRING    => BytesUtil::padding($value, $this->max),
-            FastDFSParam::TYPE_INT       => BytesUtil::packU64($value),
-            FastDFSParam::TYPE_BYTE      => BytesUtil::padding($value, Common::BYTE_SIZE),
-            FastDFSParam::TYPE_STREAM    => $value,
-            FastDFSParam::TYPE_FILE_META => '', // TODO FileMeta
-            default                      => throw new InvalidArgumentException("类型错误无法转换为byte"),
+            FastDFSParam::TYPE_STRING        => BytesUtil::padding($value, $this->max),
+            FastDFSParam::TYPE_INT           => BytesUtil::packU64($value),
+            FastDFSParam::TYPE_BYTE          => BytesUtil::padding($value, Common::BYTE_SIZE),
+            FastDFSParam::TYPE_FILE_META     => '', // TODO FileMeta
+            FastDFSParam::TYPE_ALL_REST_BYTE => $value,
+            default                          => throw new InvalidArgumentException("类型错误无法转换为byte"),
         };
     }
 
@@ -171,8 +171,8 @@ class FieldMetadata
      */
     public function getValue(string $byte): mixed
     {
-        if ($this->type === FastDFSParam::TYPE_STREAM) {
-            return substr($byte, $this->offset);
+        if ($this->type === FastDFSParam::TYPE_ALL_REST_BYTE) {
+            return trim(substr($byte, $this->offset));
         } elseif ($this->type === FastDFSParam::TYPE_FILE_META) {
             // TODO FileMeta
             return '';
@@ -203,8 +203,8 @@ class FieldMetadata
             return 0;
         }
 
-        if ($this->type === FastDFSParam::TYPE_STREAM) {
-            return $value instanceof Stream ? $value->getSize() : 0;
+        if ($this->type === FastDFSParam::TYPE_ALL_REST_BYTE) {
+            return strlen($value);
         } elseif ($this->type === FastDFSParam::TYPE_FILE_META) {
             // TODO FileMeta
             return 0;
