@@ -3,13 +3,12 @@
 namespace Ant\FastDFS\Protocols\Struct;
 
 use Ant\FastDFS\Constants\Common;
-use Ant\FastDFS\Protocols\Response;
 use Ant\FastDFS\Protocols\FastDFSParam;
 
 /**
  * @package Ant\FastDFS\Protocols\Struct
  */
-class GroupState extends Response
+class GroupState
 {
     /**
      * name of this group
