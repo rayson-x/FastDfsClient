@@ -34,25 +34,32 @@ class FastDFSParam
     public const TYPE_BYTE = 2;
 
     /**
+     * 布尔类型
+     * 
+     * @var int
+     */
+    public const TYPE_BOOL = 3;
+
+    /**
      * 允许为空的字段
      * 
      * @var int
      */
-    public const TYPE_NULLABLE = 3;
+    public const TYPE_NULLABLE = 4;
 
     /**
      * 文件属性
      * 
      * @var int
      */
-    public const TYPE_FILE_META = 4;
+    public const TYPE_FILE_META = 5;
 
     /**
      * 剩余全部内容
      * 
      * @var int
      */
-    public const TYPE_ALL_REST_BYTE = 5;
+    public const TYPE_ALL_REST_BYTE = 6;
 
     /**
      * @param int $index

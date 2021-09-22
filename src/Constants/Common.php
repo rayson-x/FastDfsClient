@@ -11,6 +11,8 @@ class Common
     public const BYTE_SIZE = 1;
     // 长整型类型长度占8字节
     public const LONG_SIZE = 8;
+    // int类型长度占4字节
+    public const INT_SIZE = 4;
 
     // 文件组名长度
     public const GROUP_NAME_SIZE = 16;

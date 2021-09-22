@@ -57,7 +57,7 @@ class Head
         }
 
         $bytes   = unpack('C10', $buffer);
-        $length  = BytesUtil::unpackU64(mb_substr($buffer, 0, static::PKG_LEN_SIZE));
+        $length  = BytesUtil::buff2long(mb_substr($buffer, 0, static::PKG_LEN_SIZE));
         $command = $bytes[static::COMMAND_INDEX];
         $status  = $bytes[static::STATUS_INDEX];
 
@@ -156,7 +156,7 @@ class Head
      */
     public function toBytes(): string
     {
-        $length = BytesUtil::packU64($this->length);
+        $length = BytesUtil::long2buff($this->length);
 
         return $length . pack('CC', $this->command, $this->status);
     }

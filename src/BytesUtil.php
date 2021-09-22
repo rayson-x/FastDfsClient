@@ -2,6 +2,8 @@
 
 namespace Ant\FastDFS;
 
+use Ant\FastDFS\Constants\Common;
+
 /**
  * BytesUtil
  * 
@@ -15,9 +17,9 @@ class BytesUtil
      * @param int $value
      * @return string
      */
-    public static function packU64(int $value): string
+    public static function long2buff(int $value): string
     {
-        return pack("NN", $value >> 32, $value & 0xFFFFFFFF);
+        return pack('NN', $value >> 32, $value & 0xFFFFFFFF);
     }
 
     /**
@@ -26,11 +28,22 @@ class BytesUtil
      * @param string $value
      * @return int
      */
-    public static function unpackU64(string $value): int
+    public static function buff2long(string $value): int
     {
-        list($hight, $low) = array_values(unpack("N*N*", $value));
+        $len = strlen($value);
+        if ($len < Common::LONG_SIZE) {
+            if ($len < Common::INT_SIZE) {
+                return 0;
+            }
 
-        return (int) bcadd($low, bcmul($hight, "4294967296"));
+            $value = substr($value, $len - 4, 4);
+
+            return array_values(unpack('N', $value))[0];
+        }
+
+        list($hight, $low) = array_values(unpack('N*N*', $value));
+
+        return (int) bcadd($low, bcmul($hight, '4294967296'));
     }
 
     /**

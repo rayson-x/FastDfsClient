@@ -6,7 +6,6 @@ use ReflectionProperty;
 use ReflectionAttribute;
 use Ant\FastDFS\BytesUtil;
 use InvalidArgumentException;
-use Ant\FastDFS\Contracts\Stream;
 use Ant\FastDFS\Constants\Common;
 
 /**
@@ -125,12 +124,20 @@ class FieldMetadata
             return $this->size;
         }
 
-        return $this->size = match ($this->type) {
+        $this->size = match ($this->type) {
             FastDFSParam::TYPE_STRING => $this->max,
             FastDFSParam::TYPE_INT    => Common::LONG_SIZE,
             FastDFSParam::TYPE_BYTE   => Common::BYTE_SIZE,
+            FastDFSParam::TYPE_BOOL   => Common::BYTE_SIZE,
             default                   => 0,
         };
+
+        // 强制设置了最大值,就以最大值为准
+        if ($this->max > 0 && $this->size > $this->max) {
+            $this->size = $this->max;
+        }
+
+        return $this->size;
     }
 
     /**
@@ -155,8 +162,9 @@ class FieldMetadata
 
         return match ($this->type) {
             FastDFSParam::TYPE_STRING        => BytesUtil::padding($value, $this->max),
-            FastDFSParam::TYPE_INT           => BytesUtil::packU64($value),
+            FastDFSParam::TYPE_INT           => BytesUtil::long2buff($value),
             FastDFSParam::TYPE_BYTE          => BytesUtil::padding($value, Common::BYTE_SIZE),
+            FastDFSParam::TYPE_NULLABLE      => BytesUtil::padding($value, $this->max),
             FastDFSParam::TYPE_FILE_META     => '', // TODO FileMeta
             FastDFSParam::TYPE_ALL_REST_BYTE => $value,
             default                          => throw new InvalidArgumentException("类型错误无法转换为byte"),
@@ -181,7 +189,7 @@ class FieldMetadata
         $value = substr($byte, $this->offset, $this->getSize());
 
         if ($this->type === FastDFSParam::TYPE_INT) {
-            $value = BytesUtil::unpackU64($value);
+            $value = BytesUtil::buff2long($value);
         } elseif ($this->type === FastDFSParam::TYPE_STRING) {
             $value = trim($value);
         }
