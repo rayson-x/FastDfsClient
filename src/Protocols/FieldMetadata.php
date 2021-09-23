@@ -165,7 +165,7 @@ class FieldMetadata
             FastDFSParam::TYPE_INT           => BytesUtil::long2buff($value),
             FastDFSParam::TYPE_BYTE          => BytesUtil::padding($value, Common::BYTE_SIZE),
             FastDFSParam::TYPE_NULLABLE      => BytesUtil::padding($value, $this->max),
-            FastDFSParam::TYPE_FILE_META     => '', // TODO FileMeta
+            FastDFSParam::TYPE_FILE_META     => $value,
             FastDFSParam::TYPE_ALL_REST_BYTE => $value,
             default                          => throw new InvalidArgumentException("类型错误无法转换为byte"),
         };
@@ -182,19 +182,28 @@ class FieldMetadata
         if ($this->type === FastDFSParam::TYPE_ALL_REST_BYTE) {
             return trim(substr($byte, $this->offset));
         } elseif ($this->type === FastDFSParam::TYPE_FILE_META) {
-            // TODO FileMeta
-            return '';
+            $fieldSeperator = hex2bin(Common::FIELD_SEPERATOR);
+            $lineSeperator  = hex2bin(Common::LINE_SEPERATOR);
+    
+            $metadata = [];
+            foreach (explode($lineSeperator, $byte) as $info) {
+                [$key, $value] = explode($fieldSeperator, $info);
+
+                $metadata[$key] = $value;
+            }
+
+            return $metadata;
         }
 
         $value = substr($byte, $this->offset, $this->getSize());
 
-        if ($this->type === FastDFSParam::TYPE_INT) {
-            $value = BytesUtil::buff2long($value);
-        } elseif ($this->type === FastDFSParam::TYPE_STRING) {
-            $value = trim($value);
-        }
-
-        return $value;
+        return match ($this->type) {
+            FastDFSParam::TYPE_INT      => BytesUtil::buff2long($value),
+            FastDFSParam::TYPE_BOOL     => $value != 0,
+            FastDFSParam::TYPE_STRING   => trim($value),
+            FastDFSParam::TYPE_NULLABLE => empty($value) ? null : trim($value),
+            default                     => $value,
+        };
     }
 
     /**
@@ -214,8 +223,7 @@ class FieldMetadata
         if ($this->type === FastDFSParam::TYPE_ALL_REST_BYTE) {
             return strlen($value);
         } elseif ($this->type === FastDFSParam::TYPE_FILE_META) {
-            // TODO FileMeta
-            return 0;
+            return strlen($value);
         } else {
             return $this->getSize();
         }

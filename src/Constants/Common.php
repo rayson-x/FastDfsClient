@@ -30,4 +30,10 @@ class Common
     public const VERSION_SIZE = 6;
     // Storage server id
     public const STORAGE_ID_MAX_SIZE = 16;
+
+    // 分隔符需要从16进制转为二进制后才可使用
+    // Metadata 行分隔符
+    public const LINE_SEPERATOR = '01';
+    // Metadata key value分隔符
+    public const FIELD_SEPERATOR = '02';
 }
