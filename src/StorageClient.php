@@ -5,6 +5,7 @@ namespace Ant\FastDFS;
 use SplFileInfo;
 use InvalidArgumentException;
 use Ant\FastDFS\Protocols\Response;
+use Ant\FastDFS\Commands\Storage\Append;
 use Ant\FastDFS\Commands\Storage\Upload;
 use Ant\FastDFS\Constants\OperationFlag;
 use Ant\FastDFS\Protocols\MetadataMapper;
@@ -14,11 +15,12 @@ use Ant\FastDFS\Commands\Storage\GetMetadata;
 use Ant\FastDFS\Commands\Storage\SetMetadata;
 use Ant\FastDFS\Protocols\Struct\StorageNode;
 use Ant\FastDFS\Protocols\Struct\FileMetadataSet;
+use Ant\FastDFS\Commands\Storage\UploadAppendable;
 use Ant\FastDFS\Contracts\Connector as ConnectorContract;
 
 /**
  * @method FileMetadataSet getMetadata(string $group, string $path)
- * 
+ *
  * @package Ant\FastDFS
  */
 class StorageClient extends Client
@@ -29,9 +31,11 @@ class StorageClient extends Client
      * @var array
      */
     protected $commands = [
-        'upload'      => Upload::class,
-        'setMetadata' => SetMetadata::class,
-        'getMetadata' => GetMetadata::class,
+        'upload'           => Upload::class,
+        'append'           => Append::class,
+        'setMetadata'      => SetMetadata::class,
+        'getMetadata'      => GetMetadata::class,
+        'uploadAppendable' => UploadAppendable::class,
     ];
 
     /**
@@ -58,11 +62,12 @@ class StorageClient extends Client
 
     /**
      * 上传文件
-     * 
+     *
      * @param string $filename
+     * @param bool $appendalbe
      * @return StorePath
      */
-    public function uploadFile(string $filename): StorePath
+    public function uploadFile(string $filename, bool $appendalbe = false): StorePath
     {
         $fileInfo = new SplFileInfo($filename);
 
@@ -72,18 +77,96 @@ class StorageClient extends Client
 
         $stream = new Stream(fopen($fileInfo->getPathname(), 'r'));
 
-        return $this->callCommand('upload', [
+        return $this->callCommand($appendalbe ? 'uploadAppendable' : 'upload', [
             $this->storageNode->storeIndex, $stream, $fileInfo->getExtension(),
         ]);
     }
 
     /**
-     * 上传流为文件
-     * 
-     * @param $resource
+     * 上传字符串内容为文件
+     *
+     * @param string $buffer
+     * @param string $extension
+     * @param bool $appendalbe
      * @return StorePath
      */
-    public function uploadStream($resource, string $extension = ''): StorePath
+    public function uploadBuffer(
+        string $buffer,
+        string $extension = '',
+        bool $appendalbe = false
+    ): StorePath {
+        $resource = fopen('php://temp', 'w+');
+
+        fwrite($resource, $buffer);
+
+        return $this->uploadStream($resource, $extension, $appendalbe);
+    }
+
+    /**
+     * 上传流为文件
+     *
+     * @param resource $resource
+     * @param string $extension
+     * @param bool $appendalbe
+     * @return StorePath
+     */
+    public function uploadStream(
+        $resource,
+        string $extension = '',
+        bool $appendalbe = false
+    ): StorePath {
+        if (!is_resource($resource)) {
+            throw new InvalidArgumentException('数据流不可用');
+        }
+
+        rewind($resource);
+
+        return $this->callCommand($appendalbe ? 'uploadAppendable' : 'upload', [
+            $this->storageNode->storeIndex, new Stream($resource), $extension,
+        ]);
+    }
+
+    /**
+     * 追加文件内容
+     *
+     * @param string $filename
+     * @return Response
+     */
+    public function appendFile(string $path, string $filename)
+    {
+        $fileInfo = new SplFileInfo($filename);
+
+        if (!$fileInfo->isFile() || !$fileInfo->isReadable()) {
+            throw new InvalidArgumentException('文件不存在或不可读');
+        }
+
+        $stream = new Stream(fopen($fileInfo->getPathname(), 'r'));
+
+        return $this->callCommand('append', [$path, $stream]);
+    }
+
+    /**
+     * 追加字符串内容
+     *
+     * @param string $buffer
+     * @return Response
+     */
+    public function appendBuffer(string $path, string $buffer)
+    {
+        $resource = fopen('php://temp', 'w+');
+
+        fwrite($resource, $buffer);
+
+        return $this->appendStream($path, $resource);
+    }
+
+    /**
+     * 追加流数据到文件
+     *
+     * @param $resource
+     * @return Response
+     */
+    public function appendStream(string $path, $resource)
     {
         if (!is_resource($resource)) {
             throw new InvalidArgumentException('数据流不可用');
@@ -91,33 +174,12 @@ class StorageClient extends Client
 
         rewind($resource);
 
-        return $this->callCommand('upload', [
-            $this->storageNode->storeIndex, new Stream($resource), $extension,
-        ]);
-    }
-
-    /**
-     * 上传字符串内容为文件
-     * 
-     * @param string $buffer
-     * @return StorePath
-     */
-    public function uploadBuffer(string $buffer, string $extension = ''): StorePath
-    {
-        $resource = fopen('php://temp', 'w+');
-
-        fwrite($resource, $buffer);
-
-        rewind($resource);
-
-        return $this->callCommand('upload', [
-            $this->storageNode->storeIndex, new Stream($resource), $extension,
-        ]);
+        return $this->callCommand('append', [$path, new Stream($resource)]);
     }
 
     /**
      * 新增或覆盖文件元数据
-     * 
+     *
      * @param string $group
      * @param string $path
      * @return Response
@@ -129,7 +191,7 @@ class StorageClient extends Client
 
     /**
      * 覆写文件元数据
-     * 
+     *
      * @param string $group
      * @param string $path
      * @return Response

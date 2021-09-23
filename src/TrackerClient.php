@@ -56,6 +56,8 @@ class TrackerClient extends Client
     }
 
     /**
+     * 获取可用的存储客户端
+     * 
      * @return StorageClient
      */
     public function getStorageClient(): StorageClient
@@ -66,12 +68,28 @@ class TrackerClient extends Client
     }
 
     /**
+     * 根据分组名获取可用的存储客户端
+     * 
      * @param string $group
      * @return StorageClient
      */
     public function getStorageClientWithGroup(string $group): StorageClient
     {
         $node = $this->getStoreStorageWithGroup($group);
+
+        return new StorageClient($node, $this->connector, $this->mapper);
+    }
+
+    /**
+     * 根据文件分组以及路径获取断点续传的Client
+     * 
+     * @param string $group
+     * @param string $path
+     * @return StorageClient
+     */
+    public function getAppendClient(string $group, string $path): StorageClient
+    {
+        $node = $this->callCommand('getFetchStorage', [$group, $path]);
 
         return new StorageClient($node, $this->connector, $this->mapper);
     }
