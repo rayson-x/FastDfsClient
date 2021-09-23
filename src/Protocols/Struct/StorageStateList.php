@@ -13,6 +13,8 @@ use Ant\FastDFS\Exceptions\IOException;
 class StorageStateList extends Response implements IteratorAggregate
 {
     /**
+     * 储存节点信息
+     * 
      * @var array<StorageState>
      */
     public array $storages = [];

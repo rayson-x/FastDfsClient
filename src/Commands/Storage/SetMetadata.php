@@ -45,7 +45,7 @@ class SetMetadata extends Command
      * 
      * @var string
      */
-    #[FastDFSParam(type: FastDFSParam::TYPE_STRING, max: Common::GROUP_NAME_SIZE, index: 3)]
+    #[FastDFSParam(type: FastDFSParam::TYPE_STRING, index: 3, max: Common::GROUP_NAME_SIZE)]
     protected $group;
 
     /**

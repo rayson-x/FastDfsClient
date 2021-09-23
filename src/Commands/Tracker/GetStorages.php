@@ -17,12 +17,16 @@ class GetStorages extends Command
 {
     /**
      * 组名
+     * 
+     * @var string
      */
     #[FastDFSParam(type: FastDFSParam::TYPE_STRING, index: 0, max: Common::GROUP_NAME_SIZE)]
-    protected $groupName;
+    protected $group;
 
     /**
      * 存储服务器ip地址
+     * 
+     * @var string|null
      */
     #[FastDFSParam(type: FastDFSParam::TYPE_NULLABLE, index: 1, max: Common::IP_ADRESS_SIZE - 1)]
     protected $storageIpAddr;

@@ -20,7 +20,7 @@ class GetMetadata extends Command
      * 
      * @var string
      */
-    #[FastDFSParam(type: FastDFSParam::TYPE_STRING, max: Common::GROUP_NAME_SIZE, index: 0)]
+    #[FastDFSParam(type: FastDFSParam::TYPE_STRING, index: 0, max: Common::GROUP_NAME_SIZE)]
     protected $group;
 
     /**

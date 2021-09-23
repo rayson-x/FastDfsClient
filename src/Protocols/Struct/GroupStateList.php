@@ -13,6 +13,8 @@ use Ant\FastDFS\Exceptions\IOException;
 class GroupStateList extends Response implements IteratorAggregate
 {
     /**
+     * 可用的储存组
+     * 
      * @var array<GroupState>
      */
     public array $groups = [];

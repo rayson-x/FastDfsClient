@@ -18,7 +18,7 @@ class DeleteStorage extends Command
      * 
      * @var string
      */
-    #[FastDFSParam(type: FastDFSParam::TYPE_STRING, max: Common::GROUP_NAME_SIZE, index: 0)]
+    #[FastDFSParam(type: FastDFSParam::TYPE_STRING, index: 0, max: Common::GROUP_NAME_SIZE)]
     protected $group;
 
     /**
@@ -26,7 +26,7 @@ class DeleteStorage extends Command
      * 
      * @var string
      */
-    #[FastDFSParam(type: FastDFSParam::TYPE_STRING, max: Common::IP_ADRESS_SIZE - 1, index: 1)]
+    #[FastDFSParam(type: FastDFSParam::TYPE_STRING, index: 1, max: Common::IP_ADRESS_SIZE - 1)]
     protected $ip;
 
     /**

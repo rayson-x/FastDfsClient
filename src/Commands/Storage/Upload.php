@@ -28,7 +28,7 @@ class Upload extends Command
     /**
      * 文件大小
      * 
-     * @var string
+     * @var int
      */
     #[FastDFSParam(type: FastDFSParam::TYPE_INT, index: 1)]
     protected $fileSize;
@@ -38,7 +38,7 @@ class Upload extends Command
      * 
      * @var string
      */
-    #[FastDFSParam(type: FastDFSParam::TYPE_STRING, max: Common::FILE_EXT_NAME_MAX_SIZE ,index: 2)]
+    #[FastDFSParam(type: FastDFSParam::TYPE_STRING ,index: 2, max: Common::FILE_EXT_NAME_MAX_SIZE)]
     protected $fileExtName;
 
     /**
