@@ -2,11 +2,14 @@
 
 namespace Ant\FastDFS\Connections\Default;
 
+use Throwable;
 use RuntimeException;
 use Ant\FastDFS\Protocols\Head;
 use Ant\FastDFS\Contracts\Command;
 use Ant\FastDFS\Contracts\Request;
 use Ant\FastDFS\Contracts\Response;
+use Ant\FastDFS\Constants\Commands;
+use Ant\FastDFS\Exceptions\IOException;
 use Ant\FastDFS\Contracts\Stream as StreamContract;
 use Ant\FastDFS\Contracts\Connection as ConnectionContract;
 
@@ -66,8 +69,16 @@ class Connection implements ConnectionContract
             return;
         }
 
-        // TODO 发送关闭连接head
-        $this->stream->close();
+        $head = new Head(0, Commands::PROTO_QUIT);
+
+        try {
+            // 发送关闭连接head
+            $this->stream->write($head->toBytes());
+        } catch (Throwable $e) {
+            // 发送退出命令失败也不做特殊处理
+        } finally {
+            $this->stream->close();
+        }
     }
 
     /**
@@ -77,7 +88,23 @@ class Connection implements ConnectionContract
      */
     public function isValid(): bool
     {
-        return $this->stream->isClosed();
+        if ($this->stream->isClosed()) {
+            return false;
+        }
+
+        $head = new Head(0, Commands::PROTO_ACTIVE_TEST);
+
+        try {
+            $this->stream->write($head->toBytes());
+
+            $head = Head::createFromBuffer($this->stream->read(Head::HEAD_LENGTH));
+
+            $head->validateResponseHead();
+            // 检查状态是否正常
+            return $head->getStatus() === 0;
+        } catch (Throwable $e) {
+            return false;
+        }
     }
 
     /**
@@ -88,9 +115,15 @@ class Connection implements ConnectionContract
      */
     public function executeCommand(Command $command)
     {
-        $this->writeRequest($this->getStream(), $command->getRequest());
+        $stream = $this->getStream();
 
-        return $this->readResponse($this->getStream(), $command->getResponse());
+        if ($stream->isClosed()) {
+            throw new IOException('Has been disconnected!');
+        }
+
+        $this->writeRequest($stream, $command->getRequest());
+
+        return $this->readResponse($stream, $command->getResponse());
     }
 
     /**
