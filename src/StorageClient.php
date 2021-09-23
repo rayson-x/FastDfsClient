@@ -4,14 +4,21 @@ namespace Ant\FastDFS;
 
 use SplFileInfo;
 use InvalidArgumentException;
+use Ant\FastDFS\Protocols\Response;
 use Ant\FastDFS\Commands\Storage\Upload;
+use Ant\FastDFS\Constants\OperationFlag;
 use Ant\FastDFS\Protocols\MetadataMapper;
 use Ant\FastDFS\Connections\Default\Stream;
 use Ant\FastDFS\Protocols\Struct\StorePath;
+use Ant\FastDFS\Commands\Storage\GetMetadata;
+use Ant\FastDFS\Commands\Storage\SetMetadata;
 use Ant\FastDFS\Protocols\Struct\StorageNode;
+use Ant\FastDFS\Protocols\Struct\FileMetadataSet;
 use Ant\FastDFS\Contracts\Connector as ConnectorContract;
 
 /**
+ * @method FileMetadataSet getMetadata(string $group, string $path)
+ * 
  * @package Ant\FastDFS
  */
 class StorageClient extends Client
@@ -22,7 +29,9 @@ class StorageClient extends Client
      * @var array
      */
     protected $commands = [
-        'upload' => Upload::class,
+        'upload'      => Upload::class,
+        'setMetadata' => SetMetadata::class,
+        'getMetadata' => GetMetadata::class,
     ];
 
     /**
@@ -34,22 +43,22 @@ class StorageClient extends Client
 
     /**
      * @param array $addresses
-     * @param array $config
      * @param ConnectorContract $connector
      * @param MetadataMapper $mapper
      */
     public function __construct(
         StorageNode $node,
-        array $config,
         ConnectorContract $connector,
         MetadataMapper $mapper,
     ) {
         $this->storageNode = $node;
 
-        parent::__construct(["{$node->ip}:{$node->port}"], $config, $connector, $mapper);
+        parent::__construct(["{$node->ip}:{$node->port}"], $connector, $mapper);
     }
 
     /**
+     * 上传文件
+     * 
      * @param string $filename
      * @return StorePath
      */
@@ -69,6 +78,27 @@ class StorageClient extends Client
     }
 
     /**
+     * 上传流为文件
+     * 
+     * @param $resource
+     * @return StorePath
+     */
+    public function uploadStream($resource, string $extension = ''): StorePath
+    {
+        if (!is_resource($resource)) {
+            throw new InvalidArgumentException('数据流不可用');
+        }
+
+        rewind($resource);
+
+        return $this->callCommand('upload', [
+            $this->storageNode->storeIndex, new Stream($resource), $extension,
+        ]);
+    }
+
+    /**
+     * 上传字符串内容为文件
+     * 
      * @param string $buffer
      * @return StorePath
      */
@@ -83,5 +113,29 @@ class StorageClient extends Client
         return $this->callCommand('upload', [
             $this->storageNode->storeIndex, new Stream($resource), $extension,
         ]);
+    }
+
+    /**
+     * 新增或覆盖文件元数据
+     * 
+     * @param string $group
+     * @param string $path
+     * @return Response
+     */
+    public function mergeMetadata(string $group, string $path, array $metadata)
+    {
+        return $this->callCommand('setMetadata', [OperationFlag::MERGE, $group, $path, $metadata]);
+    }
+
+    /**
+     * 覆写文件元数据
+     * 
+     * @param string $group
+     * @param string $path
+     * @return Response
+     */
+    public function overwriteMetadata(string $group, string $path, array $metadata)
+    {
+        return $this->callCommand('setMetadata', [OperationFlag::OVERWRITE, $group, $path, $metadata]);
     }
 }

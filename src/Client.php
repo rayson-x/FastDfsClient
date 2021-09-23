@@ -29,13 +29,6 @@ abstract class Client
     protected $commands = [];
 
     /**
-     * 配置
-     *
-     * @var array
-     */
-    protected $config = [];
-
-    /**
      * 对象元数据缓存
      *
      * @var ConnectorContract
@@ -51,13 +44,11 @@ abstract class Client
 
     /**
      * @param array $addresses
-     * @param array $config
      * @param ConnectorContract $connector
      * @param MetadataMapper $mapper
      */
     public function __construct(
         array $addresses,
-        array $config,
         ConnectorContract $connector,
         MetadataMapper $mapper,
     ) {
@@ -65,7 +56,6 @@ abstract class Client
             $this->setServerAddress($address);
         }
 
-        $this->config    = $config;
         $this->mapper    = $mapper;
         $this->connector = $connector;
     }

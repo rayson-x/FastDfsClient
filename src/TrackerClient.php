@@ -46,17 +46,13 @@ class TrackerClient extends Client
 
     /**
      * @param array $servers
-     * @param array $config
      * @param ConnectorContract $connector
      */
-    public function __construct(
-        array $servers,
-        array $config = [],
-        ConnectorContract $connector = null,
-    ) {
+    public function __construct(array $servers, ConnectorContract $connector = null)
+    {
         $connector = $connector ?: new Connector('default');
 
-        parent::__construct($servers, $config, $connector, new MetadataMapper());
+        parent::__construct($servers, $connector, new MetadataMapper());
     }
 
     /**
@@ -66,7 +62,7 @@ class TrackerClient extends Client
     {
         $node = $this->getStoreStorage();
 
-        return new StorageClient($node, $this->config, $this->connector, $this->mapper);
+        return new StorageClient($node, $this->connector, $this->mapper);
     }
 
     /**
@@ -77,6 +73,6 @@ class TrackerClient extends Client
     {
         $node = $this->getStoreStorageWithGroup($group);
 
-        return new StorageClient($node, $this->config, $this->connector, $this->mapper);
+        return new StorageClient($node, $this->connector, $this->mapper);
     }
 }
