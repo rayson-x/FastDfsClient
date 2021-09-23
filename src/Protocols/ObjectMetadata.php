@@ -119,7 +119,7 @@ class ObjectMetadata
     {
         $size = 0;
         foreach ($this->dynamicFields as $field) {
-            $size = $field->getDynamicSize($bean);
+            $size += $field->getDynamicSize($bean);
         }
 
         return $size;
