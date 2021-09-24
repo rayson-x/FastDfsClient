@@ -201,12 +201,14 @@ class FieldMetadata
             return 0;
         }
 
-        if ($this->param->type === FastDFSParam::TYPE_ALL_REST_BYTE) {
-            return strlen($value);
-        } elseif ($this->param->type === FastDFSParam::TYPE_FILE_META) {
-            return strlen($value);
-        } else {
-            return $this->getSize();
+        switch ($this->param->type) {
+            case FastDFSParam::TYPE_ALL_REST_BYTE:
+            case FastDFSParam::TYPE_FILE_META:
+                return strlen($value);
+            case FastDFSParam::TYPE_NULLABLE:
+                return $this->param->max > 0 ? $this->param->max : strlen($value);
+            default:
+                return $this->getSize();
         }
     }
 }
