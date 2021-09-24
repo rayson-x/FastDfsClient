@@ -3,7 +3,6 @@
 namespace Ant\FastDFS\Protocols;
 
 use ReflectionProperty;
-use ReflectionAttribute;
 use Ant\FastDFS\BytesUtil;
 use InvalidArgumentException;
 use Ant\FastDFS\Constants\Common;
@@ -16,40 +15,21 @@ use Ant\FastDFS\Constants\Common;
 class FieldMetadata
 {
     /**
-     * @return int
-     */
-    protected int $type;
-
-    /**
-     * @return int
-     */
-    protected int $index = 0;
-
-    /**
-     * @return int
-     */
-    protected int $max = 0;
-
-    /**
      * @return int|null
      */
     protected ?int $size = null;
 
     /**
      * @param ReflectionProperty $property
-     * @param ReflectionAttribute $attribute
+     * @param FastDFSParam $param
      * @param int $offset 字段偏移量,因为没有分隔符,需要通过偏移量计算字段
      */
     public function __construct(
         protected ReflectionProperty $property,
-        protected ReflectionAttribute $attribute,
+        protected FastDFSParam $param,
         protected int $offset,
     ) {
         $property->setAccessible(true);
-
-        foreach ($attribute->getArguments() as $name => $value) {
-            $this->{$name} = $value;
-        }
     }
 
     /**
@@ -63,13 +43,23 @@ class FieldMetadata
     }
 
     /**
+     * 获取字段类型
+     *
+     * @return int
+     */
+    public function getType(): int
+    {
+        return $this->param->type;
+    }
+
+    /**
      * 获取字段顺序
      *
      * @return int
      */
     public function getIndex() : int
     {
-        return $this->index;
+        return $this->param->index;
     }
 
     /**
@@ -79,7 +69,7 @@ class FieldMetadata
      */
     public function getMax(): int
     {
-        return $this->max;
+        return $this->param->max;
     }
 
     /**
@@ -90,16 +80,6 @@ class FieldMetadata
     public function getOffset(): int
     {
         return $this->offset;
-    }
-
-    /**
-     * 获取字段类型
-     *
-     * @return int
-     */
-    public function getType(): int
-    {
-        return $this->type;
     }
 
     /**
@@ -124,8 +104,8 @@ class FieldMetadata
             return $this->size;
         }
 
-        $this->size = match ($this->type) {
-            FastDFSParam::TYPE_STRING => $this->max,
+        $this->size = match ($this->param->type) {
+            FastDFSParam::TYPE_STRING => $this->param->max,
             FastDFSParam::TYPE_INT    => Common::LONG_SIZE,
             FastDFSParam::TYPE_BYTE   => Common::BYTE_SIZE,
             FastDFSParam::TYPE_BOOL   => Common::BYTE_SIZE,
@@ -133,8 +113,8 @@ class FieldMetadata
         };
 
         // 强制设置了最大值,就以最大值为准
-        if ($this->max > 0 && $this->size > $this->max) {
-            $this->size = $this->max;
+        if ($this->param->max > 0 && $this->size > $this->param->max) {
+            $this->size = $this->param->max;
         }
 
         return $this->size;
@@ -147,7 +127,7 @@ class FieldMetadata
      */
     public function isDynamicField(): bool
     {
-        return FastDFSParam::isDynamicField($this->type);
+        return FastDFSParam::isDynamicField($this->param->type);
     }
 
     /**
@@ -160,11 +140,11 @@ class FieldMetadata
     {
         $value = $this->property->getValue($bean);
 
-        return match ($this->type) {
-            FastDFSParam::TYPE_STRING        => BytesUtil::padding($value, $this->max),
+        return match ($this->param->type) {
+            FastDFSParam::TYPE_STRING        => BytesUtil::padding($value, $this->param->max),
             FastDFSParam::TYPE_INT           => BytesUtil::long2buff($value),
             FastDFSParam::TYPE_BYTE          => BytesUtil::padding($value, Common::BYTE_SIZE),
-            FastDFSParam::TYPE_NULLABLE      => BytesUtil::padding($value, $this->max),
+            FastDFSParam::TYPE_NULLABLE      => BytesUtil::padding($value, $this->param->max),
             FastDFSParam::TYPE_FILE_META     => $value,
             FastDFSParam::TYPE_ALL_REST_BYTE => $value,
             default                          => throw new InvalidArgumentException("类型错误无法转换为byte"),
@@ -179,9 +159,9 @@ class FieldMetadata
      */
     public function getValue(string $byte): mixed
     {
-        if ($this->type === FastDFSParam::TYPE_ALL_REST_BYTE) {
+        if ($this->param->type === FastDFSParam::TYPE_ALL_REST_BYTE) {
             return trim(substr($byte, $this->offset));
-        } elseif ($this->type === FastDFSParam::TYPE_FILE_META) {
+        } elseif ($this->param->type === FastDFSParam::TYPE_FILE_META) {
             $fieldSeperator = hex2bin(Common::FIELD_SEPERATOR);
             $lineSeperator  = hex2bin(Common::LINE_SEPERATOR);
     
@@ -197,7 +177,7 @@ class FieldMetadata
 
         $value = substr($byte, $this->offset, $this->getSize());
 
-        return match ($this->type) {
+        return match ($this->param->type) {
             FastDFSParam::TYPE_INT      => BytesUtil::buff2long($value),
             FastDFSParam::TYPE_BOOL     => $value != 0,
             FastDFSParam::TYPE_STRING   => trim($value),
@@ -220,9 +200,9 @@ class FieldMetadata
             return 0;
         }
 
-        if ($this->type === FastDFSParam::TYPE_ALL_REST_BYTE) {
+        if ($this->param->type === FastDFSParam::TYPE_ALL_REST_BYTE) {
             return strlen($value);
-        } elseif ($this->type === FastDFSParam::TYPE_FILE_META) {
+        } elseif ($this->param->type === FastDFSParam::TYPE_FILE_META) {
             return strlen($value);
         } else {
             return $this->getSize();

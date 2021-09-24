@@ -60,7 +60,8 @@ class ObjectMetadata
                 continue;
             }
 
-            $field = new FieldMetadata($property, $attributes[0], $this->fieldTotalSize);
+            $param = $attributes[0]->newInstance();
+            $field = new FieldMetadata($property, $param, $this->fieldTotalSize);
 
             if (isset($this->fields[$field->getIndex()])) {
                 $otherField = $this->fields[$field->getIndex()];
