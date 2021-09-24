@@ -144,6 +144,7 @@ class FieldMetadata
             FastDFSParam::TYPE_STRING        => BytesUtil::padding($value, $this->param->max),
             FastDFSParam::TYPE_INT           => BytesUtil::long2buff($value),
             FastDFSParam::TYPE_BYTE          => BytesUtil::padding($value, Common::BYTE_SIZE),
+            FastDFSParam::TYPE_BOOL          => $value ? hex2bin('01') : hex2bin('00'),
             FastDFSParam::TYPE_NULLABLE      => BytesUtil::padding($value, $this->param->max),
             FastDFSParam::TYPE_FILE_META     => $value,
             FastDFSParam::TYPE_ALL_REST_BYTE => $value,
@@ -179,7 +180,7 @@ class FieldMetadata
 
         return match ($this->param->type) {
             FastDFSParam::TYPE_INT      => BytesUtil::buff2long($value),
-            FastDFSParam::TYPE_BOOL     => $value != 0,
+            FastDFSParam::TYPE_BOOL     => bin2hex($value) == '01',
             FastDFSParam::TYPE_STRING   => trim($value),
             FastDFSParam::TYPE_NULLABLE => empty($value) ? null : trim($value),
             default                     => $value,
