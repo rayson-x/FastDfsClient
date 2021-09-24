@@ -4,8 +4,8 @@ namespace Ant\FastDFS\Protocols;
 
 use ReflectionProperty;
 use Ant\FastDFS\BytesUtil;
-use InvalidArgumentException;
 use Ant\FastDFS\Constants\Common;
+use Ant\FastDFS\Exceptions\ProtocolException;
 
 /**
  * FieldMetadata
@@ -96,7 +96,6 @@ class FieldMetadata
      * 获取字段长度
      *
      * @return int
-     * @throws InvalidArgumentException
      */
     public function getSize(): int
     {
@@ -148,7 +147,7 @@ class FieldMetadata
             FastDFSParam::TYPE_NULLABLE      => !empty($value) ? BytesUtil::padding($value, $this->param->max) : '',
             FastDFSParam::TYPE_FILE_META     => $value,
             FastDFSParam::TYPE_ALL_REST_BYTE => $value,
-            default                          => throw new InvalidArgumentException("类型错误无法转换为byte"),
+            default                          => throw new ProtocolException('Type errors cannot be converted to bytes'),
         };
     }
 
@@ -174,16 +173,17 @@ class FieldMetadata
             }
 
             return $metadata;
+        } elseif ($this->param->type === FastDFSParam::TYPE_NULLABLE) {
+            throw new ProtocolException('Nullable does not support conversion');
         }
 
         $value = substr($byte, $this->offset, $this->getSize());
 
         return match ($this->param->type) {
-            FastDFSParam::TYPE_INT      => BytesUtil::buff2long($value),
-            FastDFSParam::TYPE_BOOL     => bin2hex($value) == '01',
-            FastDFSParam::TYPE_STRING   => trim($value),
-            FastDFSParam::TYPE_NULLABLE => empty($value) ? null : trim($value),
-            default                     => $value,
+            FastDFSParam::TYPE_INT    => BytesUtil::buff2long($value),
+            FastDFSParam::TYPE_BOOL   => bin2hex($value) == '01',
+            FastDFSParam::TYPE_STRING => trim($value),
+            default                   => $value,
         };
     }
 
