@@ -3,7 +3,7 @@
 namespace Ant\FastDFS\Protocols;
 
 use ReflectionClass;
-use InvalidArgumentException;
+use Ant\FastDFS\Exceptions\ProtocolException;
 
 /**
  * 生成对象上传输的参数信息,并负责encode与decode
@@ -66,8 +66,8 @@ class ObjectMetadata
             if (isset($this->fields[$field->getIndex()])) {
                 $otherField = $this->fields[$field->getIndex()];
 
-                throw new InvalidArgumentException(
-                    "类{$this->class}中{$property->getName()}与{$otherField->getName()}索引定义相同"
+                throw new ProtocolException(
+                    "{$this->class} {$property->getName()} conflicts with the {$otherField->getName()}"
                 );
             }
 

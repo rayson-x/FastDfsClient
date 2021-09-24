@@ -3,6 +3,7 @@
 namespace Ant\Tests\FastDFS\Protocols;
 
 use Ant\FastDFS\BytesUtil;
+use Ant\FastDFS\Exceptions\ProtocolException;
 use PHPUnit\Framework\TestCase;
 use Ant\FastDFS\Protocols\FastDFSParam;
 use Ant\FastDFS\Protocols\ObjectMetadata;
@@ -23,6 +24,14 @@ class ObjectMetadataTest extends TestCase
         $this->assertEquals(24, $meta->getFieldTotalSize());
         $this->assertEquals(10, $meta->getDynamicTotalFieldSize($object));
         $this->assertEquals(34, $meta->getFieldsSendTotalSize($object));
+    }
+
+    public function testConflictFieldIndex()
+    {
+        $this->expectException(ProtocolException::class);
+        $this->expectExceptionMessage('Ant\Tests\FastDFS\Protocols\ConflictFoobar field2 conflicts with the field1');
+
+        new ObjectMetadata(ConflictFoobar::class);
     }
 
     public function testObjectToByte()
@@ -67,4 +76,13 @@ class Foobar
 
     #[FastDFSParam(FastDFSParam::TYPE_ALL_REST_BYTE, 2)]
     public $field3;
+}
+
+class ConflictFoobar
+{
+    #[FastDFSParam(FastDFSParam::TYPE_STRING, 1, 16)]
+    public $field1;
+
+    #[FastDFSParam(FastDFSParam::TYPE_INT, 1)]
+    public $field2;
 }

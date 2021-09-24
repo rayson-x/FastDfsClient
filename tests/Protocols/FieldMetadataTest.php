@@ -24,6 +24,18 @@ class FieldMetadataTest extends TestCase
         $this->assertEquals($property, $meta->getProperty());
     }
 
+    public function testInvalidField()
+    {
+        $property = new ReflectionProperty(Foo::class, 'bar');
+        $param    = new FastDFSParam(10, 1, 4);
+        $meta     = new FieldMetadata($property, $param, 3);
+
+        $this->expectException(ProtocolException::class);
+        $this->expectExceptionMessage('Type errors cannot be converted to bytes');
+
+        $meta->toByte(new Foo(null));
+    }
+
     public function testStringField()
     {
         $property = new ReflectionProperty(Foo::class, 'bar');
