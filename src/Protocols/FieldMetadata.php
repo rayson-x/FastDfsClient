@@ -145,7 +145,7 @@ class FieldMetadata
             FastDFSParam::TYPE_INT           => BytesUtil::long2buff($value),
             FastDFSParam::TYPE_BYTE          => BytesUtil::padding($value, Common::BYTE_SIZE),
             FastDFSParam::TYPE_BOOL          => $value ? hex2bin('01') : hex2bin('00'),
-            FastDFSParam::TYPE_NULLABLE      => BytesUtil::padding($value, $this->param->max),
+            FastDFSParam::TYPE_NULLABLE      => !empty($value) ? BytesUtil::padding($value, $this->param->max) : '',
             FastDFSParam::TYPE_FILE_META     => $value,
             FastDFSParam::TYPE_ALL_REST_BYTE => $value,
             default                          => throw new InvalidArgumentException("类型错误无法转换为byte"),
@@ -197,6 +197,7 @@ class FieldMetadata
     {
         $value = $this->property->getValue($bean);
 
+        // 值为空时不计算长度
         if (empty($value)) {
             return 0;
         }
