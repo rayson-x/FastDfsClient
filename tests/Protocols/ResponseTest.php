@@ -1,6 +1,6 @@
 <?php
 
-namespace Ant\Tests\FastDFS\Protocols;
+namespace Tests\Ant\FastDFS\Protocols;
 
 use Ant\FastDFS\BytesUtil;
 use PHPUnit\Framework\TestCase;

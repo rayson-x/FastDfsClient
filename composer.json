@@ -23,7 +23,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Ant\\Test\\FastDFS\\": "tests"
+            "Test\\Ant\\FastDFS\\": "tests"
         }
     }
 }

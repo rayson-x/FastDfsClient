@@ -1,6 +1,6 @@
 <?php
 
-namespace Ant\Tests\FastDFS\Protocols;
+namespace Tests\Ant\FastDFS\Protocols;
 
 use Ant\FastDFS\BytesUtil;
 use Ant\FastDFS\Exceptions\ProtocolException;
@@ -29,7 +29,7 @@ class ObjectMetadataTest extends TestCase
     public function testConflictFieldIndex()
     {
         $this->expectException(ProtocolException::class);
-        $this->expectExceptionMessage('Ant\Tests\FastDFS\Protocols\ConflictFoobar field2 conflicts with the field1');
+        $this->expectExceptionMessage('Tests\Ant\FastDFS\Protocols\ConflictFoobar field2 conflicts with the field1');
 
         new ObjectMetadata(ConflictFoobar::class);
     }

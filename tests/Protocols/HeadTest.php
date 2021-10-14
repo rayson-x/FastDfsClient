@@ -1,6 +1,6 @@
 <?php
 
-namespace Ant\Tests\FastDFS\Protocols;
+namespace Tests\Ant\FastDFS\Protocols;
 
 use Ant\FastDFS\Exceptions\ProtocolException;
 use Ant\FastDFS\Protocols\Head;
