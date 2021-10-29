@@ -21,7 +21,7 @@
         <ini name="memory_limit" value="512M" />
 
         <!-- FastDFS Server -->
-        <const name="TRACKER_SERVER_HOST" value="192.168.12.254" />
+        <const name="TRACKER_SERVER_HOST" value="127.0.0.1" />
         <const name="TRACKER_SERVER_PORT" value="22122" />
         <const name="CONNECTION_DRIVER" value="default" />
     </php>
