@@ -164,7 +164,7 @@ class FieldMetadata
         } elseif ($this->param->type === FastDFSParam::TYPE_FILE_META) {
             $fieldSeperator = hex2bin(Common::FIELD_SEPERATOR);
             $lineSeperator  = hex2bin(Common::LINE_SEPERATOR);
-    
+
             $metadata = [];
             foreach (explode($lineSeperator, $byte) as $info) {
                 [$key, $value] = explode($fieldSeperator, $info);
