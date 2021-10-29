@@ -8,6 +8,9 @@ use PHPUnit\Framework\TestCase;
 
 class HeadTest extends TestCase
 {
+    /**
+     * @group disconnected
+     */
     public function testGetAttributes()
     {
         $head = new Head(10, 11, 0);
@@ -17,6 +20,9 @@ class HeadTest extends TestCase
         $this->assertSame(0, $head->getStatus());
     }
 
+    /**
+     * @group disconnected
+     */
     public function testWithAttributes()
     {
         $head = new Head(10, 11, 0);
@@ -34,6 +40,9 @@ class HeadTest extends TestCase
         $this->assertSame(1, $new->getStatus());
     }
 
+    /**
+     * @group disconnected
+     */
     public function testHeadToBinary()
     {
         $hex  = ['00', '00', '00', '00', '00', '00', '04', 'd2', '10', '00'];
@@ -42,6 +51,9 @@ class HeadTest extends TestCase
         $this->assertEquals(hex2bin(join('', $hex)), $head->toBytes());
     }
 
+    /**
+     * @group disconnected
+     */
     public function testBinaryToHead()
     {
         $hex    = ['00', '00', '00', '00', '00', '00', '04', 'd2', '10', '00'];
@@ -53,6 +65,9 @@ class HeadTest extends TestCase
         $this->assertSame(0, $head->getStatus());
     }
 
+    /**
+     * @group disconnected
+     */
     public function testErrorBinaryToHaed()
     {
         $this->expectException(ProtocolException::class);

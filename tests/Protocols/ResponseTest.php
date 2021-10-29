@@ -10,6 +10,9 @@ use Ant\FastDFS\Protocols\MetadataMapper;
 
 class ResponseTest extends TestCase
 {
+    /**
+     * @group disconnected
+     */
     public function testReadResponse()
     {
         $name  = BytesUtil::padding('foobar', 16);

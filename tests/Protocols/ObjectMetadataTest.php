@@ -3,13 +3,16 @@
 namespace Tests\Ant\FastDFS\Protocols;
 
 use Ant\FastDFS\BytesUtil;
-use Ant\FastDFS\Exceptions\ProtocolException;
 use PHPUnit\Framework\TestCase;
 use Ant\FastDFS\Protocols\FastDFSParam;
 use Ant\FastDFS\Protocols\ObjectMetadata;
+use Ant\FastDFS\Exceptions\ProtocolException;
 
 class ObjectMetadataTest extends TestCase
 {
+    /**
+     * @group disconnected
+     */
     public function testGetProperty()
     {
         $object = new Foobar;
@@ -26,6 +29,9 @@ class ObjectMetadataTest extends TestCase
         $this->assertEquals(34, $meta->getFieldsSendTotalSize($object));
     }
 
+    /**
+     * @group disconnected
+     */
     public function testConflictFieldIndex()
     {
         $this->expectException(ProtocolException::class);
@@ -34,6 +40,9 @@ class ObjectMetadataTest extends TestCase
         new ObjectMetadata(ConflictFoobar::class);
     }
 
+    /**
+     * @group disconnected
+     */
     public function testObjectToByte()
     {
         $object = new Foobar;
@@ -46,6 +55,9 @@ class ObjectMetadataTest extends TestCase
         $this->assertEquals($this->prepareByte('foobar', 1, '1234567890'), $meta->toByte($object));
     }
 
+    /**
+     * @group disconnected
+     */
     public function testByteToObject()
     {
         $meta = new ObjectMetadata(Foobar::class);
@@ -57,6 +69,9 @@ class ObjectMetadataTest extends TestCase
         $this->assertEquals('1234567890', $object->field3);
     }
 
+    /**
+     * @group disconnected
+     */
     protected function prepareByte($field1, $field2, $field3)
     {
         $field1 = BytesUtil::padding($field1, 16);

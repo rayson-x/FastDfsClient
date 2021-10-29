@@ -11,6 +11,9 @@ use Ant\FastDFS\Exceptions\ProtocolException;
 
 class FieldMetadataTest extends TestCase
 {
+    /**
+     * @group disconnected
+     */
     public function testGetProperty()
     {
         $property = new ReflectionProperty(Foo::class, 'bar');
@@ -24,6 +27,9 @@ class FieldMetadataTest extends TestCase
         $this->assertEquals($property, $meta->getProperty());
     }
 
+    /**
+     * @group disconnected
+     */
     public function testInvalidField()
     {
         $property = new ReflectionProperty(Foo::class, 'bar');
@@ -36,6 +42,9 @@ class FieldMetadataTest extends TestCase
         $meta->toByte(new Foo(null));
     }
 
+    /**
+     * @group disconnected
+     */
     public function testStringField()
     {
         $property = new ReflectionProperty(Foo::class, 'bar');
@@ -57,6 +66,9 @@ class FieldMetadataTest extends TestCase
         $this->assertEquals('foobar', $meta->getValue($byte));
     }
 
+    /**
+     * @group disconnected
+     */
     public function testIntField()
     {
         $property = new ReflectionProperty(Foo::class, 'bar');
@@ -78,6 +90,9 @@ class FieldMetadataTest extends TestCase
         $this->assertEquals(16, $meta->getValue($byte));
     }
 
+    /**
+     * @group disconnected
+     */
     public function testByteField()
     {
         $property = new ReflectionProperty(Foo::class, 'bar');
@@ -99,6 +114,9 @@ class FieldMetadataTest extends TestCase
         $this->assertEquals('1', $meta->getValue($byte));
     }
 
+    /**
+     * @group disconnected
+     */
     public function testBoolField()
     {
         $property = new ReflectionProperty(Foo::class, 'bar');
@@ -120,6 +138,9 @@ class FieldMetadataTest extends TestCase
         $this->assertNotTrue($meta->getValue(hex2bin('00')));
     }
 
+    /**
+     * @group disconnected
+     */
     public function testNullableField()
     {
         $property = new ReflectionProperty(Foo::class, 'bar');
@@ -150,6 +171,9 @@ class FieldMetadataTest extends TestCase
         $meta->getValue(hex2bin('01'));
     }
 
+    /**
+     * @group disconnected
+     */
     public function testMetadataField()
     {
         $property = new ReflectionProperty(Foo::class, 'bar');
@@ -181,6 +205,9 @@ class FieldMetadataTest extends TestCase
         $this->assertEquals($metadata, $meta->getValue($byte));
     }
 
+    /**
+     * @group disconnected
+     */
     public function testAllRestByteField()
     {
         $property = new ReflectionProperty(Foo::class, 'bar');
@@ -200,6 +227,22 @@ class FieldMetadataTest extends TestCase
 
         // byte变回对象
         $this->assertEquals('foobar', $meta->getValue('foobar'));
+    }
+
+    /**
+     * @group disconnected
+     */
+    public function testDiffObjectGetDynamicSizeCanAffectEachOther()
+    {
+        $property = new ReflectionProperty(Foo::class, 'bar');
+        $param    = new FastDFSParam(FastDFSParam::TYPE_ALL_REST_BYTE, 0);
+        $meta     = new FieldMetadata($property, $param, 0);
+
+        $object1 = new Foo('foo');
+        $this->assertEquals(3, $meta->getDynamicSize($object1));
+
+        $object2 = new Foo('foobar');
+        $this->assertEquals(6, $meta->getDynamicSize($object2));
     }
 }
 

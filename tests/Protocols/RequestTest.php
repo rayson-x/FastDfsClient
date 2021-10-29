@@ -12,6 +12,9 @@ use Ant\FastDFS\Contracts\Command as CommandContract;
 
 class RequestTest extends TestCase
 {
+    /**
+     * @group disconnected
+     */
     public function testGetHeadByte()
     {
         $meta = $this->getMockBuilder(ObjectMetadata::class)
@@ -33,6 +36,9 @@ class RequestTest extends TestCase
         $this->assertSame(hex2bin(join('', $hex)), $request->getHeadByte());
     }
 
+    /**
+     * @group disconnected
+     */
     public function testGetHeadByteWithInputStream()
     {
         $meta = $this->getMockBuilder(ObjectMetadata::class)
@@ -59,6 +65,9 @@ class RequestTest extends TestCase
         $this->assertSame(hex2bin(join('', $hex)), $request->getHeadByte());
     }
 
+    /**
+     * @group disconnected
+     */
     public function testGetParamByte()
     {
         $meta = $this->getMockBuilder(ObjectMetadata::class)
@@ -77,6 +86,9 @@ class RequestTest extends TestCase
         $this->assertSame('foobar', trim($byte));
     }
 
+    /**
+     * @group disconnected
+     */
     public function testGetInputFileStream()
     {
         $meta = $this->getMockBuilder(ObjectMetadata::class)
