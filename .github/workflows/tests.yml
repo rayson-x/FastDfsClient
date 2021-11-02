@@ -8,15 +8,22 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
+    strategy:
+      fail-fast: true
+      matrix:
+        php: ['8.0', '8.1']
+
+    name: PHP ${{ matrix.php }}
+
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout
+      uses: actions/checkout@v2
 
     - name: Setup PHP with Composer and extensions
       with:
-        php-version: 8.0
+        php-version: ${{ matrix.php }}
       uses: shivammathur/setup-php@v2
 
     - name: Validate composer.json and composer.lock
@@ -26,7 +33,7 @@ jobs:
       id: composer-cache
       uses: actions/cache@v2
       with:
-        php-version: 8.0
+        php-version: ${{ matrix.php }}
         path: vendor
         key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
         restore-keys: |
