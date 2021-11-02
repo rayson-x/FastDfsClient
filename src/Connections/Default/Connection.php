@@ -3,7 +3,6 @@
 namespace Ant\FastDFS\Connections\Default;
 
 use Throwable;
-use RuntimeException;
 use Ant\FastDFS\Protocols\Head;
 use Ant\FastDFS\Contracts\Command;
 use Ant\FastDFS\Contracts\Request;
@@ -44,7 +43,7 @@ class Connection implements ConnectionContract
         );
 
         if (false === $socket) {
-            throw new RuntimeException("Connection to {$address}:{$port} failed: {$errstr}", $errno);
+            throw new IOException("Connection to {$address}:{$port} failed: {$errstr}", $errno);
         }
 
         $this->stream = new Stream($socket);

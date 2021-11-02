@@ -2,10 +2,10 @@
 
 namespace Tests\Ant\FastDFS\Connections;
 
-use RuntimeException;
 use PHPUnit\Framework\TestCase;
 use Ant\FastDFS\Contracts\Stream;
 use Ant\FastDFS\Contracts\Connection;
+use Ant\FastDFS\Exceptions\IOException;
 
 abstract class ConnectionTestCase extends TestCase
 {
@@ -14,8 +14,7 @@ abstract class ConnectionTestCase extends TestCase
      */
     public function testInvalidConnection()
     {
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Connection to 127.0.0.2:22122 failed: Operation timed out');
+        $this->expectException(IOException::class);
 
         $this->createConnection(['127.0.0.2', '22122', 0.1]);
     }
